@@ -4,7 +4,7 @@ let bodyParser = require('body-parser')
 let env = require('node-env-file')
 let routes = require('./routes/index')
 
-env(__dirname + '/src/.env');
+env(__dirname + '/.env');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
