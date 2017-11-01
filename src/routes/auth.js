@@ -58,7 +58,7 @@ router.post('/register', (req, res) => {
             }
             mailer(mailOptions)
             userData._id = user._id
-            const userDataWithToken = addToken(userData)
+            const userDataWithToken = addToken(filterUserData(userData))
             res.send(userDataWithToken)
         })
         .catch(err => res.status(400).send(err.message || 500))
@@ -75,7 +75,6 @@ router.post('/register', (req, res) => {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *          username: "jdupond",
             first_name: "Jean",
             last_name: "Dupond",
             email: "jean@gmail.com",
@@ -85,9 +84,9 @@ router.post('/register', (req, res) => {
        }
  */
 router.post('/login', (req, res) => {
-    User.findOne({username: req.body.username})
+    User.findOne({email: req.body.email})
         .then(user => User.findOne({
-            username: user.username,
+            email: user.email,
             password: bcrypt.hashSync(req.body.password, user.salt)
         }))
         .then(user => {

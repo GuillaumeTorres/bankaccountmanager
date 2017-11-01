@@ -13,6 +13,11 @@ $ apt install mongodb
 ```
 $ npm start
 ```
+dev:
+```
+$ npm install -g nodemon
+$ nodemon
+```
 
 #### MongoDB
 ```
