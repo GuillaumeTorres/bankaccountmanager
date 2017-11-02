@@ -18,7 +18,6 @@ const formatUser = user => {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *          username: "jdupond",
             first_name: "Jean",
             last_name: "Dupond",
             email: "jean@gmail.com"
@@ -44,7 +43,6 @@ router.get('/', (req, res) => {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *          username: "jdupond",
             first_name: "Jean",
             last_name: "Dupond",
             email: "jean.dupond@gmail.com"
@@ -80,7 +78,6 @@ router.delete('/delete/:id', (req, res) => {
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {
- *          username: "jdupond",
             first_name: "Jean",
             last_name: "Dupond",
             email: "jean@gmail.com"

@@ -69,8 +69,8 @@ router.post('/register', (req, res) => {
  * @apiName login
  * @apiGroup User
  *
- * @apiParam {String} username Username
- * @apiParam {String} first_name First name
+ * @apiParam {String} email     Email
+ * @apiParam {String} password  Password
  *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
