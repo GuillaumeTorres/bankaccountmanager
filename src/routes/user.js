@@ -75,6 +75,9 @@ router.delete('/delete/:id', (req, res) => {
  * @api {get} /user/password Edit user password
  * @apiName editPassword
  * @apiGroup User
+ *
+ * @apiParam {String} password Password
+ *
  * @apiSuccessExample Success-Response:
  *     HTTP/1.1 200 OK
  *     {

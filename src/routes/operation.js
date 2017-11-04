@@ -1,11 +1,11 @@
 let express = require('express')
 let router = express.Router()
 let User  = require('../db/db').User
-let CronJob = require('cron').CronJob
 let mailer = require('../services/mailer')
+let schedule = require('node-schedule')
 
 /**
- * @api {get} /operation/transfer Simple transfer
+ * @api {post} /operation/transfer Simple transfer
  * @apiName transfer
  * @apiGroup Operation
  *
@@ -23,7 +23,7 @@ router.post('/transfer', (req, res) => {
 })
 
 /**
- * @api {get} /operation/permanent_transfer Simple transfer
+ * @api {post} /operation/permanent_transfer Simple transfer
  * @apiName permanentTransfer
  * @apiGroup Operation
  *
@@ -38,14 +38,18 @@ router.post('/transfer', (req, res) => {
        }
  */
 router.post('/permanent_transfer', (req, res) => {
-    let job = new CronJob(`00 03 19 ${req.body.day} * *`, () => {
-        transfer(req.user, req.body.user_id, req.body.amount, res)
+
+    const jobId = Math.floor(Date.now() / 1000).toString()
+    schedule.scheduleJob(jobId, `00 21 16 ${req.body.day} * *`, () => {
+        transfer(req.user, req.body.user_id, req.body.amount, res, true)
     },
     true, // Start the job right now
     'Europe/Paris'
     )
+    // Exemple to get by id
+    // let my_job = schedule.scheduledJobs[jobId]
 
-    if (job.running) res.send({success: 'Operation complete'})
+    res.send({success: 'Operation complete'})
 })
 
 const checkAccount = (user_id, amount, res) => {
