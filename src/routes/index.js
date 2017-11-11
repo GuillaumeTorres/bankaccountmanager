@@ -1,6 +1,7 @@
 let userRoutes = require('./user')
 let operationRoutes = require('./operation')
 let authRoutes = require('./auth')
+let transferRoutes = require('./transfer')
 let jwt = require('jsonwebtoken')
 
 let checkToken = (req, res, next) => {
@@ -19,5 +20,6 @@ let checkToken = (req, res, next) => {
 module.exports = function routes(app){
     app.use('/user', checkToken, userRoutes)
     app.use('/operation', checkToken, operationRoutes)
+    app.use('/transfer', checkToken, transferRoutes)
     app.use('/auth', authRoutes)
 }

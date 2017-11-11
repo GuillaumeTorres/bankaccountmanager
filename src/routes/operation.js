@@ -1,6 +1,7 @@
 let express = require('express')
 let router = express.Router()
 let User  = require('../db/db').User
+let Transfer  = require('../db/db').Transfer
 let mailer = require('../services/mailer')
 let schedule = require('node-schedule')
 
@@ -19,7 +20,7 @@ let schedule = require('node-schedule')
        }
  */
 router.post('/transfer', (req, res) => {
-    transfer(req.user, req.body.user_id, req.body.amount, res)
+    transferOperation(req.user, req.body.user_id, req.body.amount, res)
 })
 
 /**
@@ -40,16 +41,29 @@ router.post('/transfer', (req, res) => {
 router.post('/permanent_transfer', (req, res) => {
 
     const jobId = Math.floor(Date.now() / 1000).toString()
-    schedule.scheduleJob(jobId, `00 21 16 ${req.body.day} * *`, () => {
-        transfer(req.user, req.body.user_id, req.body.amount, res, true)
+    const targetUserId = req.body.user_id
+    const currentUser = req.user
+    const amount = req.body.amount
+    const day = req.body.day
+
+    schedule.scheduleJob(jobId, `00 25 15 ${day} * *`, () => {
+        transferOperation(currentUser, targetUserId, amount, res, true)
     },
     true, // Start the job right now
     'Europe/Paris'
     )
+    const transferData = {
+        user_sender: currentUser._id,
+        user_target: targetUserId,
+        amount: amount,
+        job_name: jobId,
+        day: day
+    }
+    const transfer = new Transfer(transferData)
+    transfer.save()
+        .then(transfer => res.send(transfer))
+        .catch(err => res.status(400).send(err.message || 500))
     // Exemple to get by id
-    // let my_job = schedule.scheduledJobs[jobId]
-
-    res.send({success: 'Operation complete'})
 })
 
 const checkAccount = (user_id, amount, res) => {
@@ -60,9 +74,8 @@ const checkAccount = (user_id, amount, res) => {
         .catch(err => console.log(err))
 }
 
-const transfer = (userFrom, userTo, amount, res, permanent = false) => {
+const transferOperation = (userFrom, userTo, amount, res, permanent = false) => {
     checkAccount(userFrom._id, amount, (isValid) => {
-        console.log('is: ', isValid)
         if (!isValid) {
             let body = '<h2>Virement refusé</h2>' +
                 '<p>Les fonds sur votre virement ne sont pas suffisants, votre virement mensuel a été annulé</p>'
